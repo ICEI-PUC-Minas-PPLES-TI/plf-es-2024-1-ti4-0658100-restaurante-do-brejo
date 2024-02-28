@@ -1,4 +1,4 @@
-# [Nome do projeto]
+# Restaurante do Brejo
 
 [Escreva um ou dois  parágrafo resumindo o objetivo do seu projeto.]
 
@@ -13,8 +13,9 @@
 
 ## Professores responsáveis
 
-* [Nome completo do professor 1]
-* [Nome completo do professor 2]
+* Joana Gabriela Ribeiro de Souza
+* Joyce Christina de Paiva Carvalho
+* Soraia Lúcia da Silva
 
 ## Instruções de utilização
 
