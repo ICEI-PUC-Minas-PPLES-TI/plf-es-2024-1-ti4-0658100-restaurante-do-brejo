@@ -5,9 +5,11 @@
 ## Alunos integrantes da equipe
 
 * Beatriz de Oliveira Silveira
-* [Nome completo do aluno 2]
-* [Nome completo do aluno 3]
-* [Nome completo do aluno 4]
+* Joaquim de Moura Thomaz Neto
+* Maria Eduarda Chrispim Santana
+* Matheus Pereira
+* Vitor Fernandes de Souza
+* Vitória Ye Miao
 
 ## Professores responsáveis
 
