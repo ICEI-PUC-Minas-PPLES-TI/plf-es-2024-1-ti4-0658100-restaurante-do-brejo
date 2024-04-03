@@ -271,6 +271,15 @@
 
       // Close mobile menu on close button click
       closeMenuBtn.addEventListener("click", () => hamburgerBtn.click());
+      //Mudar cor da NavBar
+  window.addEventListener('scroll', function() {
+    const navbar = document.querySelector('nav.navbar');
+    if (window.scrollY > 0) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+  });
 
     </script>
     

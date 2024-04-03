@@ -738,3 +738,37 @@ section {
     padding: 10rem 1rem; /* Reduzindo ainda mais o preenchimento em dispositivos móveis */
   }
 }
+/* consertando navbar/*
+/* Media query para telas maiores que 768px (telas de computador) */
+@media (min-width: 768px) {
+  /* Navbar padrão */
+  nav.navbar {
+    background-color: transparent; /* Cor de fundo inicial */
+    transition: background-color 0.3s ease; /* Transição suave da cor de fundo */
+    width: 100vw; /* Largura total da tela */
+    left: 0; /* Ajustando a posição para o lado esquerdo */
+    right: 0; /* Ajustando a posição para o lado direito */
+    margin: 0 auto; /* Centralizando a navbar */
+    padding-top: 15px; /* Ajuste vertical para o conteúdo */
+    padding-bottom: 15px; /* Ajuste vertical para o conteúdo */
+    padding-left: 30px; /* Aumenta o padding apenas na horizontal (esquerda) */
+    padding-right: 30px; /* Aumenta o padding apenas na horizontal (direita) */
+    overflow-x: hidden; /* Para evitar a barra de rolagem horizontal */
+    border-radius: 15px; /* Adiciona bordas arredondadas */
+  }
+
+}
+/* Navbar com classe "scrolled" */
+nav.navbar.scrolled {
+  background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo com transparência */
+  backdrop-filter: blur(20px); /* Aumentando o desfoque para 20 pixels */
+  width: 100vw; /* Largura total da tela */
+  left: 0; /* Ajustando a posição para o lado esquerdo */
+  right: 0; /* Ajustando a posição para o lado direito */
+  margin: 0 auto; /* Centralizando a navbar */
+  position: fixed; /* Fixa a navbar na parte superior da tela */
+  z-index: 1000; /* Ajusta o z-index para garantir que a navbar rolada esteja na frente de outros elementos */
+  border-radius: 15px; /* Adiciona bordas arredondadas */
+}
+
+
