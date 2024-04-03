@@ -12,6 +12,21 @@ db = mysql.connector.connect(
     auth_plugin='mysql_native_password'  # Use mysql_native_password para autenticação
 )
 
+# Rota acessoCliente
+@app.route("/acessoCliente", methods=['POST'])
+def acessoCliente():
+    email = request.form.get('emailCliente')
+    senha = request.form.get('senhaCliente')
+
+    print(f'o email é: {email}')
+    print(f'a senha é: {senha}')
+
+    if email == 'DoBrejo@gmail.com' and senha == '123':
+        return render_template('/acessoADM.html')
+    else:
+        return render_template('/LoginCliente.html')
+
+
 # Rota para a HOME
 @app.route("/")
 def home():
