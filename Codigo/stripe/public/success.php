@@ -11,10 +11,11 @@ if (empty($_GET['session_id'])) {
 }
 $sessionId = $_GET['session_id'];
 
-// Obtém o ID do usuário da sessão ou define um fallback seguro
-$userId = $_SESSION['userId'] ?? 1; // Fallback só para desenvolvimento
+// Obtém o ID do cliente da sessão ou define um fallback seguro
+$id_cliente = $_SESSION['id_cliente'] ; // Fallback só para desenvolvimento
 
 try {
+    // Conecta ao banco de dados
     $pdo = new PDO('mysql:host=localhost;dbname=prestaurante', 'root', '');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->beginTransaction();
@@ -22,41 +23,61 @@ try {
     // Verificar o status do pagamento com Stripe antes de prosseguir
     $session = \Stripe\Checkout\Session::retrieve($sessionId);
     if ($session->payment_status === 'paid') {
+        // Recupera o endereço do cliente do URL de sucesso
+        $endereco = $_GET['address'] ?? 'Endereço não especificado';
+
+        // Consulta o endereço do cliente na tabela de usuários
+        $stmt = $pdo->prepare("SELECT endereco FROM usuarios WHERE id = :id_cliente");
+        $stmt->execute(['id_cliente' => $id_cliente]);
+        $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Verifica se o endereço do cliente foi encontrado
+        if (!$cliente || empty($cliente['endereco'])) {
+            throw new Exception("Endereço do cliente não encontrado.");
+        }
+
+        // Consulta os itens no carrinho de compras do cliente
         $stmt = $pdo->prepare("
-        SELECT c.id_produto, c.quantidade, p.preco
-        FROM carrinho c
-        JOIN produtos p ON c.id_produto = p.id_produto
-        WHERE c.id_usuario = :id_usuario
-    ");
-    $stmt->execute(['id_usuario' => $userId]);
-    
+            SELECT c.id_produto, c.quantidade, p.preco
+            FROM carrinho c
+            JOIN produtos p ON c.id_produto = p.id_produto
+            WHERE c.id_usuario = :id_cliente
+        ");
+        $stmt->execute(['id_cliente' => $id_cliente]);
+
+        // Recupera todos os itens do carrinho
         $carrinhoItens = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (!$carrinhoItens) {
             throw new Exception("Carrinho está vazio.");
         }
 
+        // Calcula o total do pedido
         $total = array_sum(array_map(function ($item) {
-            return $item['preco'] * $item['quantidade']; }, $carrinhoItens));
+            return $item['preco'] * $item['quantidade'];
+        }, $carrinhoItens));
 
-        $stmt = $pdo->prepare("INSERT INTO pedidos (id_cliente, total, status_pedido, data, endereco) VALUES (:id_cliente, :total, 'Pago', NOW(), 'Endereço aqui')");
-        $stmt->execute(['id_cliente' => $userId, 'total' => $total]);
+        // Insere o pedido no banco de dados
+        $stmt = $pdo->prepare("INSERT INTO pedidos (id_cliente, total, status_pedido, data, endereco) VALUES (:id_cliente, :total, 'Pago', NOW(), :endereco)");
+        $stmt->execute([
+            'id_cliente' => $id_cliente,
+            'total' => $total,
+            'endereco' => $cliente['endereco'] // Usando o endereço do cliente
+        ]);
 
-        $id_pedido = $pdo->lastInsertId();
+        // Restante do código para inserir itens do pedido, limpar carrinho, etc.
+        // ...
 
-        foreach ($carrinhoItens as $item) {
-            $stmt = $pdo->prepare("INSERT INTO pedido_produtos (id_pedido, id_produto) VALUES (:id_pedido, :id_produto)");
-            $stmt->execute([
-                'id_pedido' => $id_pedido,
-                'id_produto' => $item['id_produto']
-            ]);
-        }
+        // Limpa o carrinho do cliente
+        $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id_usuario = :id_cliente");
+        $stmt->execute(['id_cliente' => $id_cliente]);
 
-        $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id_usuario = :id_usuario");
-        $stmt->execute(['id_usuario' => $userId]);
-
+        // Confirma a transação do banco de dados
         $pdo->commit();
-        echo "Pedido realizado com sucesso!";
+
+        // Redireciona para a página principal ou para outra página de sucesso
+        header('Location: ../../Login_v2/indexLogado.php');
+        exit();
     } else {
         throw new Exception("Pagamento não confirmado pelo Stripe.");
     }

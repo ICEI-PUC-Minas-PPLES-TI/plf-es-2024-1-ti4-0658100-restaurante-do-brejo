@@ -1,5 +1,13 @@
 <?php
+session_start();  // Continua necessário para acessar a sessão
+
 include_once ('config.php');
+
+$id = $_SESSION['id_cliente'] ;  // Acessa o ID do usuário na sessão, se disponível
+
+// Se o ID não estiver disponível, você pode decidir como manipular isso.
+// Por exemplo, você poderia redirecionar ou simplesmente não executar as operações que dependem do ID.
+// Para este exemplo, vamos assumir que o resto do código pode lidar com um $id nulo.
 
 // Consulta para a seção de pratos
 $queryDishes = "SELECT id_produto, nome, preco, caminho_img, descricao FROM produtos WHERE categoria != 'pf'";
@@ -23,30 +31,31 @@ if ($resultadoHot && $resultadoHot->num_rows > 0) {
   }
 }
 
-$userId = $_SESSION['userId'] ?? 1; // Exemplo: Pegando ID do usuário da sessão ou usando um default
-
-// Consulta para itens no carrinho do usuário específico
-// Consulta para itens no carrinho do usuário específico
-$queryCart = "SELECT p.id_produto, p.nome, p.preco, p.caminho_img, c.quantidade, c.data_hora 
-              FROM carrinho c 
-              JOIN produtos p ON c.id_produto = p.id_produto 
-              WHERE c.id_usuario = ?";
-$stmt = $conn->prepare($queryCart);
-$stmt->bind_param("i", $userId);
-$stmt->execute();
-$resultadoCart = $stmt->get_result();
-
-
+// Consulta para itens no carrinho do usuário específico, se houver um id definido
 $cartItems = [];
+if ($id) {
+  $queryCart = "SELECT p.id_produto, p.nome, p.preco, p.caminho_img, c.quantidade, c.data_hora 
+                  FROM carrinho c 
+                  JOIN produtos p ON c.id_produto = p.id_produto 
+                  WHERE c.id_usuario = ?";
+  $stmt = $conn->prepare($queryCart);
+  $stmt->bind_param("i", $id);
+  $stmt->execute();
+  $resultadoCart = $stmt->get_result();
 
-if ($resultadoCart->num_rows > 0) {
-  while ($row = $resultadoCart->fetch_assoc()) {
-    $cartItems[] = $row;
+  if ($resultadoCart->num_rows > 0) {
+    while ($row = $resultadoCart->fetch_assoc()) {
+      $cartItems[] = $row;
+    }
   }
 }
 
 $conn->close();
+
+// Incluímos o restante do seu HTML e scripts abaixo desta linha
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -78,7 +87,7 @@ $conn->close();
   <!-- Custom styles for this template -->
   <link href="css/style.css" rel="stylesheet" />
   <!-- responsive style -->
-  <link href="css/responsive.css" rel="stylesheet" />
+
 
   <style>
     .cart-menu {
@@ -86,14 +95,16 @@ $conn->close();
       display: inline-block;
     }
 
+
     .cart-btn {
-      position: absolute;
-      right: 100px;
-      /* Ajuste este valor para aumentar ou diminuir o espaço da borda direita */
-      top: 50%;
-      /* Centraliza verticalmente */
+      position: fixed;
+      /* Fixa o botão em relação à viewport */
+      right: 20px;
+      /* Posiciona o botão no canto direito da tela */
+      top: 4,5%;
+      /* Posiciona verticalmente na metade da altura da tela */
       transform: translateY(-50%);
-      /* Ajuste fino para centralizar exatamente */
+      /* Centraliza verticalmente */
       padding: 10px 20px;
       background-color: #ffa500;
       /* Cor de fundo */
@@ -104,13 +115,16 @@ $conn->close();
       cursor: pointer;
     }
 
+
+
     .cart-dropdown {
       display: none;
-      position: absolute;
-      right: 10px;
-      /* Ajusta a posição 10px à esquerda da borda direita do seu contêiner posicionado */
-      top: 50px;
-      /* Exemplo: faz com que o dropdown comece 50px abaixo do topo do contêiner */
+      position: fixed;
+      /* Fixa o dropdown em relação à viewport, assim como o botão */
+      right: 20px;
+      /* Alinha o dropdown à direita, abaixo do botão */
+      top: calc(2% + 50px);
+      /* Ajusta a posição vertical para aparecer logo abaixo do botão */
       width: 300px;
       background-color: #f9f9f9;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -118,6 +132,8 @@ $conn->close();
       border-radius: 5px;
       z-index: 1000;
     }
+
+
 
     .cart-item {
       margin-bottom: 10px;
@@ -144,13 +160,94 @@ $conn->close();
       padding: 10px 0;
       text-decoration: none;
     }
+
+    /* Estilo global para todas as imagens dos pratos */
+    .img-box img {
+      width: 100%;
+      /* Faz a imagem expandir para preencher o container */
+      height: auto;
+      /* Mantém a proporção da imagem */
+      object-fit: cover;
+      /* Garante que a imagem cubra toda a área designada sem perder a proporção */
+      border-radius: 10px;
+      /* Adiciona bordas arredondadas para uma aparência mais suave */
+    }
+
+    /* Estilo para o container das imagens para definir um tamanho fixo */
+    .img-box {
+      height: 200px;
+      /* Define uma altura fixa para todas as imagens */
+      overflow: hidden;
+      /* Oculta partes da imagem que excedam o tamanho do container */
+      border-radius: 10px;
+      /* Assegura que a borda da imagem combine com o raio da borda do container */
+      margin-bottom: 15px;
+      /* Adiciona espaço abaixo do container da imagem */
+    }
+
+    /* Estilo para o container dos pratos para manter a consistência */
+    .box {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      /* Adiciona sombra para destacar */
+      transition: transform 0.3s ease-in-out;
+      /* Animação suave para hover */
+    }
+
+    /* Estilo para o hover nos pratos */
+    .box:hover {
+      transform: translateY(-5px);
+      /* Movimenta o prato um pouco para cima quando o mouse está sobre ele */
+    }
+
+    .modal {
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgb(0, 0, 0);
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      animation-name: animatetop;
+      animation-duration: 0.4s;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
   </style>
 </head>
 
-<body class="sub_page">
-  <div class="hero_area">
+<body class="sub_page1">
+  <div class="hero_area1">
     <!-- header section strats -->
     <header class="header_section">
+      <style>
+        .header_section {
+          background-color: #ef9851;
+          /* Cor laranja */
+        }
+      </style>
       <div class="container-fluid">
         <nav class="navbar navbar-expand-lg custom_nav-container">
           <a class="navbar-brand" href="Login_v2/indexLogado.php">
@@ -162,8 +259,8 @@ $conn->close();
               <?php if (!empty($cartItems)): ?>
                 <?php foreach ($cartItems as $item): ?>
                   <div class="cart-item">
-                    <img src="images/<?= htmlspecialchars($item['caminho_img']) ?>"
-                      alt="<?= htmlspecialchars($item['nome']) ?>" style="width: 50px; height: auto;">
+                    <img src="<?= htmlspecialchars($item['caminho_img']) ?>" alt="<?= htmlspecialchars($item['nome']) ?>"
+                      style="width: 50px; height: auto;">
                     <p><?= htmlspecialchars($item['nome']) ?></p>
                     <p>Quantidade: <?= htmlspecialchars($item['quantidade']) ?></p>
                     <p>Preço: R$<?= number_format($item['preco'], 2, ',', '.') ?></p>
@@ -175,8 +272,8 @@ $conn->close();
                     <?php endif; ?>
                   </div>
                 <?php endforeach; ?>
-                <a href="stripe/public/checkout.php" class="btn">Pagamento em Cartão</a>
-                <a href="" class="btn1">Pagamento em Dinheiro</a>
+                <a href="#" class="btn open-modal">Pague Aqui!</a>
+
               <?php else: ?>
                 <p>Nenhum item no carrinho.</p>
               <?php endif; ?>
@@ -184,9 +281,30 @@ $conn->close();
 
 
           </div>
-          
+
         </nav>
       </div>
+      <!-- Modal Pague Aqui -->
+      <div id="paymentModal" class="modal" style="display:none;">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Informações de Pagamento</h2>
+          
+          <!-- Conteúdo do Modal -->
+          <form action="process_payment.php" method="post" id="paymentForm">
+          
+            <!-- Botões de Método de Pagamento -->
+            <button type="submit" class="btn" name="payment_method" value="cash">Pagar em
+              Dinheiro na Entrega</button>
+            <!-- Alterado para botão para poder usar 'disabled' -->
+            <button type="button" class="btn" id="payCardBtn"
+              onclick="window.location.href='stripe/public/checkout.php'">Pagamento em Cartão</button>
+
+          </form>
+        </div>
+      </div>
+
+
     </header>
     <!-- end header section -->
   </div>
@@ -200,8 +318,7 @@ $conn->close();
             <div class="col-md-6 col-lg-4">
               <div class="box">
                 <div class="img-box">
-                  <img src="images/<?= htmlspecialchars($row['caminho_img']) ?>"
-                    alt="<?= htmlspecialchars($row['nome']) ?>">
+                  <img src="<?= htmlspecialchars($row['caminho_img']) ?>" alt="<?= htmlspecialchars($row['nome']) ?>">
                 </div>
                 <div class="detail-box">
                   <h5><?= htmlspecialchars($row['nome']) ?></h5>
@@ -240,8 +357,7 @@ $conn->close();
                   <div class="item">
                     <div class="box">
                       <div class="img-box">
-                        <img src="images/<?= htmlspecialchars($row['caminho_img']) ?>"
-                          alt="<?= htmlspecialchars($row['nome']) ?>">
+                        <img src="<?= htmlspecialchars($row['caminho_img']) ?>" alt="<?= htmlspecialchars($row['nome']) ?>">
                       </div>
                       <div class="detail-box">
                         <h4>R$<?= number_format($row['preco'], 2, ',', '.') ?></h4>
@@ -327,14 +443,11 @@ $conn->close();
     document.querySelectorAll('.delete-btn').forEach(button => {
       button.addEventListener('click', function () {
         var productId = this.getAttribute('data-id');
-
-        // Configurar a solicitação AJAX para enviar o ID do produto a ser deletado
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'delete_cart_item.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onload = function () {
           if (this.status === 200) {
-            // Recarrega a página para mostrar o carrinho atualizado
             location.reload();
           } else {
             alert('Erro ao deletar o item.');
@@ -344,7 +457,79 @@ $conn->close();
       });
     });
 
+    document.querySelector('.open-modal').addEventListener('click', function (event) {
+      event.preventDefault();
+      var modal = document.getElementById('paymentModal');
+      var dropdown = document.querySelector('.cart-dropdown');
+      dropdown.style.display = 'none'; // Fechar o dropdown do carrinho ao abrir o modal
+      modal.style.display = 'block';
+    });
+
+    // Fechamento do modal com o botão close
+    var closeBtn = document.querySelector('#paymentModal .close'); // Assegurar que o seletor está correto
+    closeBtn.onclick = function () {
+      var modal = document.getElementById('paymentModal');
+      modal.style.display = "none";
+    };
+
+    // Fechar o modal ao clicar fora dele
+    window.onclick = function (event) {
+      var modal = document.getElementById('paymentModal');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    };
   </script>
+  <script>
+    function showCardDetails() {
+      var cardDetails = document.getElementById('cardDetails');
+      cardDetails.style.display = 'block'; // Mostra os campos para pagamento com cartão
+      // Alterar a action do formulário para redirecionar para o sistema de pagamentos
+      var form = document.getElementById('paymentForm');
+      form.action = 'process_card_payment.php';
+    }
+
+    // Para o botão de fechar o modal
+    var span = document.getElementsByClassName("close")[0];
+    span.onclick = function () {
+      var modal = document.getElementById('paymentModal');
+      modal.style.display = "none";
+    }
+
+    // Para fechar o modal quando clicar fora dele
+    window.onclick = function (event) {
+      var modal = document.getElementById('paymentModal');
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const addressInput = document.querySelector('input[name="address"]');
+      const payCashBtn = document.getElementById('payCashBtn');
+      const payCardBtn = document.getElementById('payCardBtn');
+
+      // Função para verificar o estado do campo de endereço e ajustar a disponibilidade dos botões
+      function toggleButtonState() {
+        if (addressInput.value.trim() !== "") {
+          payCashBtn.disabled = false;
+          payCardBtn.disabled = false;
+        } else {
+          payCashBtn.disabled = true;
+          payCardBtn.disabled = true;
+        }
+      }
+
+      // Adiciona um evento 'input' que é disparado sempre que o usuário digita no campo de endereço
+      addressInput.addEventListener('input', toggleButtonState);
+
+      // Verifica inicialmente o estado do campo ao carregar a página
+      toggleButtonState();
+    });
+  </script>
+
+
   <!-- end owl carousel script -->
 
 </body>

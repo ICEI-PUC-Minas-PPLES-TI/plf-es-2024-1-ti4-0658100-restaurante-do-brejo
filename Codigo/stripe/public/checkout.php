@@ -4,7 +4,15 @@ require_once '../../vendor/autoload.php';
 require_once '../secrets.php';
 \Stripe\Stripe::setApiKey($stripeSecretKey);
 
-$userId = 1;  // Exemplo de ID de usuário definido estaticamente
+session_start(); // Inicia a sessão para acessar as variáveis de sessão
+
+if (!isset($_SESSION['id_cliente'])) {
+    // Se o ID do cliente não estiver definido na sessão, redirecione para a página de login
+    header("Location: login.php");
+    exit(); // Encerra o script para evitar execução adicional
+}
+
+$userId = $_SESSION['id_cliente']; // Obtém o ID do cliente da sessão
 
 // Conecta ao banco de dados
 try {

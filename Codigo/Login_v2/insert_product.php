@@ -1,31 +1,37 @@
 <?php
-// Inclua o arquivo de configuração para estabelecer a conexão com o banco de dados
-include 'config.php';
+// Conexão com o banco de dados (altere de acordo com as suas configurações)
+include_once('config.php');
 
-// Verifique se o formulário foi submetido
+// Verifica se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recupere os dados do formulário
     $nome = $_POST['nome'];
     $preco = $_POST['preco'];
     $categoria = $_POST['categoria'];
     $descricao = $_POST['descricao'];
 
-    // Prepare a instrução SQL para inserir os dados
-    $sql = "INSERT INTO produtos (nome, preco, categoria, descricao, atividade) VALUES ('$nome', '$preco', '$categoria', '$descricao', 'ativo')";
-
-    // Execute a instrução SQL
-    if ($conn->query($sql) === TRUE) {
-        // Se a inserção for bem-sucedida, retorne uma resposta JSON indicando sucesso
-        echo json_encode(array("success" => true));
+    // Verifica se um arquivo de imagem foi enviado
+    if ($_FILES['imagem']['error'] == UPLOAD_ERR_OK) {
+        $imagem_tmp = $_FILES['imagem']['tmp_name'];
+        $imagem_nome = $_FILES['imagem']['name'];
+        
+        // Move a imagem para o diretório desejado
+        $caminho_imagem = "images/produtos/" . $imagem_nome;
+        move_uploaded_file($imagem_tmp, $caminho_imagem);
     } else {
-        // Se houver algum erro, retorne uma resposta JSON indicando o erro
-        echo json_encode(array("success" => false, "error" => $conn->error));
+        // Caso não seja enviada uma imagem, você pode definir um valor padrão para o caminho da imagem
+        $caminho_imagem = ""; // Altere para o valor padrão desejado
     }
-} else {
-    // Se o formulário não foi submetido, retorne uma resposta JSON indicando um erro
-    echo json_encode(array("success" => false, "error" => "Formulário não submetido"));
-}
 
-// Feche a conexão com o banco de dados
-$conn->close();
+    // Insere os dados do produto no banco de dados
+    $sql = "INSERT INTO produtos (nome, preco, categoria, descricao, caminho_img) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bind_param("sdsss", $nome, $preco, $categoria, $descricao, $caminho_imagem);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Produto cadastrado com sucesso!');</script>";
+        echo "<script>window.location.href='gerenciamentoMenu.php';</script>";
+    } else {
+        echo "Erro ao cadastrar o produto: " . $conexao->error;
+    }
+}
 ?>

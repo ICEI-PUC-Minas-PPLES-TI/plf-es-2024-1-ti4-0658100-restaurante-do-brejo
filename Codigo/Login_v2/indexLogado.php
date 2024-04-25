@@ -7,7 +7,13 @@ if (!isset($_SESSION['id_cliente'])) {
     header('Location: login.php');  // Redireciona para a página de login
     exit();  // Encerra a execução do script
 }
-$id_cliente_logado = $_SESSION['id_cliente'];
+
+// Agora atribua o valor da variável $_SESSION['id_cliente'] a $id_cliente
+$id_cliente = $_SESSION['id_cliente'];
+
+// Imprime o ID do cliente para visualização
+echo "ID do Cliente: " . $id_cliente;
+
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +29,12 @@ $id_cliente_logado = $_SESSION['id_cliente'];
 <body>
     <!-- Início da barra de navegação -->
     <div class="sidebar">
+        <style>
+            .sidebar {
+                background-color: #ef9851;
+                /* Cor laranja */
+            }
+        </style>
         <div class="logo">
             <img src="images/icons/Logo Restaurante do Brejo (sem fundo).png" alt="Logo">
         </div>
@@ -33,7 +45,7 @@ $id_cliente_logado = $_SESSION['id_cliente'];
                 <li><a href="../food.php"><img src="images/icons/cardapio.png" alt="Ícone Menu"> Menu</a></li>
                 <li><a href="#"><img src="images/icons/reserva.png" alt="Ícone Reservas"> Reservas</a></li>
                 <li><a href="#"><img src="images/icons/avaliacao.png" alt="Ícone Avaliações"> Avaliações</a></li>
-                <li><a href="../index.php"><img src="" alt="Ícone Avaliações"> Sair</a></li>
+                <li><a href="../index.php"><img src="" alt=""> Sair</a></li>
             </ul>
         </nav>
     </div>
@@ -46,10 +58,20 @@ $id_cliente_logado = $_SESSION['id_cliente'];
             include 'config.php';
 
             // Preparando a consulta para evitar SQL Injection
-            $stmt = $conexao->prepare("SELECT p.id_pedido, p.status_pedido, p.data, p.total, p.endereco, prod.nome, prod.caminho_img FROM pedidos p JOIN pedido_produtos pp ON p.id_pedido = pp.id_pedido JOIN produtos prod ON pp.id_produto = prod.id_produto WHERE p.id_cliente = ?");
-            $stmt->bind_param("i", $id_cliente_logado);
+            // Preparando a consulta para evitar SQL Injection
+            $stmt = $conexao->prepare("SELECT p.id_pedido, p.status_pedido, p.data, p.total, p.endereco, prod.nome, prod.caminho_img
+                                        FROM pedidos p
+                                        JOIN pedido_produtos pp ON p.id_pedido = pp.id_pedido
+                                        JOIN produtos prod ON pp.id_produto = prod.id_produto
+                                        WHERE p.id_cliente = ?
+                                        ORDER BY p.data DESC");
+            $stmt->bind_param("i", $id_cliente); // Usando $id_cliente aqui
             $stmt->execute();
             $result = $stmt->get_result();
+
+            // Restante do código...
+            
+
 
 
 
@@ -79,7 +101,7 @@ $id_cliente_logado = $_SESSION['id_cliente'];
                     echo "<img class='corner-image info-icon' src='images/icons/simbolo-de-informacao.png' alt='Small Image'>"; // Icone de informação
                     echo "<div class='produtos-container'>"; // Container para os produtos
                     foreach ($pedido['produtos'] as $produto) {
-                        echo "<img src='images/icons/" . htmlspecialchars($produto['imagem']) . "' alt='Profile Picture' style='width:50px; margin-right: 5px;'>"; // Miniatura do produto
+                        echo "<img src='../" . htmlspecialchars($produto['imagem']) . "' alt='" . htmlspecialchars($produto['nome']) . "' style='width:50px; margin-right: 5px;'>";
                         echo "<p>" . htmlspecialchars($produto['nome']) . "</p>"; // Nome do produto
                     }
                     echo "</div>";
@@ -147,7 +169,7 @@ $id_cliente_logado = $_SESSION['id_cliente'];
             // Atualizando a lista de produtos
             var productsList = 'Produtos:<br>';
             dadosPedido.produtos.forEach(function (produto) {
-                productsList += produto.nome + '<br><img src="' + produto.imagem + '" alt="Imagem do Produto" style="width:50px;"><br>';
+                productsList += produto.nome + '<br><img src="../' + produto.imagem + '" alt="Imagem do Produto" style="width:50px;"><br>';
             });
             document.getElementById('modalProductName').innerHTML = productsList; // Usando innerHTML para incluir tags HTML
 
@@ -157,7 +179,7 @@ $id_cliente_logado = $_SESSION['id_cliente'];
 
 
     </script>
-    
+
 
 </body>
 
