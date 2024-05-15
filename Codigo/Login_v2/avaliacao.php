@@ -1,0 +1,217 @@
+<?php
+
+session_start();  // Inicia a sessão
+
+// Verifica se o usuário não está logado
+if (!isset($_SESSION['id_cliente'])) {
+    header('Location: login.php');  // Redireciona para a página de login
+    exit();  // Encerra a execução do script
+}
+
+// Agora atribua o valor da variável $_SESSION['id_cliente'] a $id_cliente
+$id_cliente = $_SESSION['id_cliente'];
+
+// Imprime o ID do cliente para visualização
+echo "ID do Cliente: " . $id_cliente;
+
+?>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico de compras</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .star-rating .star {
+            font-size: 30px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .star-rating .star:hover,
+        .star-rating .star:hover~.star {
+            color: #f0ad4e;
+            /* Cor ao passar o mouse e para as estrelas seguintes */
+        }
+
+        .star-rating .star.selected {
+            color: #ffd700;
+            /* Cor das estrelas selecionadas */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Início da barra de navegação -->
+    <div class="sidebar">
+        <style>
+            .sidebar {
+                background-color: #ef9851;
+                /* Cor laranja */
+            }
+        </style>
+        <div class="logo">
+            <img src="images/icons/Logo Restaurante do Brejo (sem fundo).png" alt="Logo">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="indexLogado.php"><img src="images/icons/do-utilizador.png" alt="Ícone Pessoa"> Sua
+                        Conta</a></li>
+                <li><a href="#"><img src="images/icons/casa.png" alt="Ícone Casa"> Tela Inicial</a></li>
+                <li><a href="../food.php"><img src="images/icons/cardapio.png" alt="Ícone Menu"> Menu</a></li>
+                <li><a href="#"><img src="images/icons/reserva.png" alt="Ícone Reservas"> Reservas</a></li>
+                <li><a href="avaliacao.php"><img src="images/icons/avaliacao.png" alt="Ícone Avaliações"> Avaliação</a>
+                </li>
+                <li><a href="../index.php"><img src="" alt=""> Sair</a></li>
+            </ul>
+        </nav>
+    </div>
+    <!-- Fim da barra de navegação -->
+
+    <div class="content">
+        <h1 class="titulo">• Avaliação do Estabelecimento •</h1>
+        <div class="compras-container">
+            <form action="submit_avaliacao.php" method="POST" id="formAvaliacao">
+                <div class="form-group">
+                    <label for="comentario">Comentário:</label>
+                    <textarea id="comentario" name="comentario" rows="4" class="form-control"
+                        placeholder="Deixe seu comentário aqui..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Nota:</label>
+                    <div class="star-rating">
+                        <span class="star">&#9733;</span>
+                        <span class="star">&#9733;</span>
+                        <span class="star">&#9733;</span>
+                        <span class="star">&#9733;</span>
+                        <span class="star">&#9733;</span>
+                    </div>
+                    <input type="hidden" name="nota" id="nota">
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-- Fim do modal -->
+
+    <script>
+        var modal; // Definição global para garantir acessibilidade
+        var dadosPedido; // Definição global para guardar os dados do pedido atual
+
+        document.addEventListener('DOMContentLoaded', function () {
+            modal = document.getElementById("myModal");
+            var closeSpan = document.getElementsByClassName("close")[0];
+
+            closeSpan.onclick = function () {
+                modal.style.display = "none";
+            };
+
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = "none";
+                }
+            };
+
+            document.querySelectorAll('.compra-card').forEach(function (card) {
+                card.addEventListener('click', function () {
+                    var jsonData = this.getAttribute('data-json');
+                    if (jsonData) {
+                        showModal(jsonData);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.star-button').forEach(function (star, index) {
+                star.addEventListener('click', function () {
+                    document.querySelectorAll('.star-button').forEach((s, i) => {
+                        s.style.color = i <= index ? 'orange' : 'gray';
+                    });
+                    document.getElementById('selectedRating').value = index + 1;
+                });
+            });
+        });
+
+        function showModal(jsonData) {
+            try {
+                dadosPedido = JSON.parse(jsonData); // Parse e armazena globalmente
+                if (dadosPedido) {
+                    document.getElementById('modalStatus').textContent = 'Status do pedido: ' + dadosPedido.status_pedido;
+                    document.getElementById('modalDate').textContent = 'Data: ' + dadosPedido.data;
+                    document.getElementById('modalSubtotal').textContent = 'Subtotal: R$' + dadosPedido.total;
+                    document.getElementById('modalTotal').textContent = 'Total: R$' + dadosPedido.total;
+                    document.getElementById('modalPaymentMethod').textContent = 'Forma de pagamento: ' + (dadosPedido.paymentMethod || 'não informada');
+                    document.getElementById('modalAddress').textContent = 'Endereço: ' + dadosPedido.endereco;
+
+                    var productsList = 'Produtos:<br>';
+                    dadosPedido.produtos.forEach(function (produto) {
+                        productsList += produto.nome + '<br><img src="../' + produto.imagem + '" style="width:50px;"><br>';
+                    });
+                    document.getElementById('modalProductName').innerHTML = productsList;
+
+                    modal.style.display = "block";
+                }
+            } catch (e) {
+                console.error("Erro ao processar dados do pedido: ", e);
+            }
+        }
+
+        function submitReview() {
+            if (!dadosPedido) {
+                console.error("Dados do pedido não estão disponíveis.");
+                return;
+            }
+            var idPedido = dadosPedido.id_pedido; // Usa o id_pedido armazenado
+            var rating = document.getElementById('selectedRating').value;
+            var comment = document.getElementById('commentBox').value;
+
+            fetch('submit_review.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'id_pedido=' + idPedido + '&nota=' + rating + '&comentario=' + comment
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.status === 'success') {
+                        document.getElementById('commentBox').disabled = true;
+                        document.querySelectorAll('.star-button').forEach(button => {
+                            button.onclick = null;
+                            button.style.cursor = "default";
+                        });
+                        document.querySelectorAll('.star-button').forEach((star, index) => {
+                            star.style.color = index < rating ? 'orange' : 'gray';
+                        });
+                        document.querySelector('button[onclick="submitReview()"]').style.display = 'none';
+                        document.getElementById('modalProductName').innerHTML += `<p>Comentário: ${comment}</p>`;
+                        modal.style.display = "none";
+                    }
+                }).catch(error => console.error('Error:', error));
+        }
+        document.querySelectorAll('.star-rating .star').forEach(function(star, idx) {
+    star.onclick = function() {
+        let allStars = document.querySelectorAll('.star-rating .star');
+        allStars.forEach((star, index) => {
+            if(index <= idx) {
+                star.classList.add('selected');
+            } else {
+                star.classList.remove('selected');
+            }
+        });
+        document.getElementById('nota').value = idx + 1; // Atribui a nota selecionada ao input escondido
+    };
+});
+
+    </script>
+
+
+</body>
+
+</html>

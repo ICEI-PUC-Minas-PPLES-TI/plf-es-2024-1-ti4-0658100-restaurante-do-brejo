@@ -28,6 +28,17 @@
   <link href="css/style.css" rel="stylesheet" />
   <!-- responsive style -->
   <link href="css/responsive.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+  .fa-star {
+    color: #ccc; /* Cor padrão das estrelas não marcadas */
+  }
+
+  .checked {
+    color: orange; /* Cor das estrelas marcadas */
+  }
+</style>
+
 </head>
 
 <body>
@@ -267,103 +278,65 @@
 
   <!-- client section -->
 
-  <section class="client_section layout_padding">
-    <div class="container">
-      <div class="heading_container">
-        <hr>
-        <h2>
-          comentários dos nossos clientes
-        </h2>
-      </div>
-      <div id="carouselExample2Indicators" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          <li data-target="#carouselExample2Indicators" data-slide-to="0" class="active"></li>
-          <li data-target="#carouselExample2Indicators" data-slide-to="1"></li>
-          <li data-target="#carouselExample2Indicators" data-slide-to="2"></li>
-          <li data-target="#carouselExample2Indicators" data-slide-to="3"></li>
-        </ol>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="box ">
-              <div class="client_id">
-                <div class="img-box">
-                  <img src="images/client.png" alt="" class="img-fluid">
-                </div>
-                <h4>
-                  Jacksmith sand
-                </h4>
-              </div>
-              <div class="detail-box">
-                <p>
-                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered
-                  alteration in
-                  some form, by injected humour, or randomised words which .
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="box ">
-              <div class="client_id">
-                <div class="img-box">
-                  <img src="images/client.png" alt="" class="img-fluid">
-                </div>
-                <h4>
-                  Jacksmith sand
-                </h4>
-              </div>
-              <div class="detail-box">
-                <p>
-                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered
-                  alteration in
-                  some form, by injected humour, or randomised words which .
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="box ">
-              <div class="client_id">
-                <div class="img-box">
-                  <img src="images/client.png" alt="" class="img-fluid">
-                </div>
-                <h4>
-                  Jacksmith sand
-                </h4>
-              </div>
-              <div class="detail-box">
-                <p>
-                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered
-                  alteration in
-                  some form, by injected humour, or randomised words which .
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <div class="box ">
-              <div class="client_id">
-                <div class="img-box">
-                  <img src="images/client.png" alt="" class="img-fluid">
-                </div>
-                <h4>
-                  Jacksmith sand
-                </h4>
-              </div>
-              <div class="detail-box">
-                <p>
-                  There are many variations of passages of Lorem Ipsum available, but the majority have suffered
-                  alteration in
-                  some form, by injected humour, or randomised words which .
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <?php include 'config.php'; ?>
 
+<section class="client_section layout_padding">
+    <div class="container">
+        <div class="heading_container">
+            <hr>
+            <h2>
+                comentários dos nossos clientes
+            </h2>
+        </div>
+        <div id="carouselExample2Indicators" class="carousel slide" data-ride="carousel">
+            <ol class="carousel-indicators">
+                <?php
+                $result = $conn->query("SELECT * FROM avaliacao_rest");
+                if ($result) {
+                    $numRows = $result->num_rows;
+                    for ($i = 0; $i < $numRows; $i++) {
+                        echo "<li data-target='#carouselExample2Indicators' data-slide-to='$i'" . ($i === 0 ? " class='active'" : "") . "></li>";
+                    }
+                }
+                ?>
+            </ol>
+            <div class="carousel-inner">
+                <?php
+                $first = true;
+                while ($row = $result->fetch_assoc()) {
+                    echo "<div class='carousel-item" . ($first ? " active" : "") . "'>";
+                    echo "<div class='box'>";
+                    echo "<div class='client_id'>";
+                    echo "<div class='img-box'>";
+                    echo "<img src='images/client.png' alt='' class='img-fluid'>";
+                    echo "</div>";
+                    echo "<h4>" . htmlspecialchars($row['nome']) . "</h4>";
+                    echo "</div>";
+                    echo "<div class='detail-box'>";
+                    echo "<p>" . htmlspecialchars($row['comentario']) . "</p>";
+                    // Renderizar as estrelas baseadas na avaliação
+                    echo "<div class='rating'>";
+                    for ($i = 0; $i < 5; $i++) {
+                        if ($i < $row['nota']) {
+                            echo "<span class='fa fa-star checked'></span>";
+                        } else {
+                            echo "<span class='fa fa-star'></span>";
+                        }
+                    }
+                    echo "</div>";
+                    echo "</div>";
+                    echo "</div>";
+                    echo "</div>";
+                    $first = false;
+                }
+                $result->free();
+                ?>
+            </div>
+        </div>
     </div>
-  </section>
+</section>
+
+
   <!-- end client section -->
 
   <!-- contact section -->

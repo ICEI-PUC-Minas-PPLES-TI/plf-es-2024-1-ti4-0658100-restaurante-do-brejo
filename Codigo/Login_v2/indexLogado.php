@@ -44,7 +44,7 @@ echo "ID do Cliente: " . $id_cliente;
                 <li><a href="#"><img src="images/icons/casa.png" alt="Ícone Casa"> Tela Inicial</a></li>
                 <li><a href="../food.php"><img src="images/icons/cardapio.png" alt="Ícone Menu"> Menu</a></li>
                 <li><a href="#"><img src="images/icons/reserva.png" alt="Ícone Reservas"> Reservas</a></li>
-                <li><a href="#"><img src="images/icons/avaliacao.png" alt="Ícone Avaliações"> Avaliações</a></li>
+                <li><a href="avaliacao.php"><img src="images/icons/avaliacao.png" alt="Ícone Avaliações"> Avaliação</a></li>
                 <li><a href="../index.php"><img src="" alt=""> Sair</a></li>
             </ul>
         </nav>
@@ -71,9 +71,6 @@ echo "ID do Cliente: " . $id_cliente;
 
             // Restante do código...
             
-
-
-
 
             $pedidos = [];
             if ($result->num_rows > 0) {
@@ -120,6 +117,8 @@ echo "ID do Cliente: " . $id_cliente;
     <!-- Início do modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
+            <input type="hidden" id="selectedRating" value="0">
+
             <span class="close">&times;</span>
             <h2 id="modalStatus">Status do pedido:</h2>
             <div id="modalProductName">Produto:</div>
@@ -127,7 +126,6 @@ echo "ID do Cliente: " . $id_cliente;
             <p id="modalAddress">Endereço:</p>
             <h3>Resumo dos valores</h3>
             <p id="modalSubtotal">Subtotal: R$</p>
-            <p id="modalDeliveryFee">Taxa de entrega: R$</p>
             <p id="modalTotal">Total: R$</p>
             <p id="modalPaymentMethod">Forma de pagamento:</p>
             <h3>Avaliação:</h3>
@@ -138,47 +136,110 @@ echo "ID do Cliente: " . $id_cliente;
                 <span class="star-button">★</span>
                 <span class="star-button">★</span>
             </div>
+            <textarea id="commentBox" placeholder="Adicione um comentário sobre o pedido..." rows="4"
+                style="width: 100%;"></textarea>
+            <button onclick="submitReview(dadosPedido)" style="margin-top: 10px;">Enviar Avaliação</button>
         </div>
     </div>
 
     <!-- Fim do modal -->
 
     <script>
-        var modal = document.getElementById("myModal");
-        var span = document.getElementsByClassName("close")[0];
+    var modal; // Definição global para garantir acessibilidade
+    var dadosPedido; // Definição global para guardar os dados do pedido atual
 
-        span.onclick = function () {
+    document.addEventListener('DOMContentLoaded', function () {
+        modal = document.getElementById("myModal");
+        var closeSpan = document.getElementsByClassName("close")[0];
+
+        closeSpan.onclick = function () {
             modal.style.display = "none";
         };
 
         window.onclick = function (event) {
-            if (event.target == modal) {
+            if (event.target === modal) {
                 modal.style.display = "none";
             }
         };
 
-        function showModal(jsonData) {
-            var dadosPedido = JSON.parse(jsonData);
-            document.getElementById('modalStatus').textContent = 'Status do pedido: ' + dadosPedido.status_pedido;
-            document.getElementById('modalDate').textContent = 'Data: ' + dadosPedido.data;
-            document.getElementById('modalSubtotal').textContent = 'Subtotal: R$' + dadosPedido.total;
-            document.getElementById('modalTotal').textContent = 'Total: R$' + dadosPedido.total;
-            document.getElementById('modalPaymentMethod').textContent = 'Forma de pagamento: (informação não fornecida)';
-            document.getElementById('modalAddress').textContent = 'Endereço: ' + dadosPedido.endereco;
-
-            // Atualizando a lista de produtos
-            var productsList = 'Produtos:<br>';
-            dadosPedido.produtos.forEach(function (produto) {
-                productsList += produto.nome + '<br><img src="../' + produto.imagem + '" alt="Imagem do Produto" style="width:50px;"><br>';
+        document.querySelectorAll('.compra-card').forEach(function (card) {
+            card.addEventListener('click', function () {
+                var jsonData = this.getAttribute('data-json');
+                if (jsonData) {
+                    showModal(jsonData);
+                }
             });
-            document.getElementById('modalProductName').innerHTML = productsList; // Usando innerHTML para incluir tags HTML
+        });
 
-            modal.style.display = "block";
+        document.querySelectorAll('.star-button').forEach(function (star, index) {
+            star.addEventListener('click', function () {
+                document.querySelectorAll('.star-button').forEach((s, i) => {
+                    s.style.color = i <= index ? 'orange' : 'gray';
+                });
+                document.getElementById('selectedRating').value = index + 1;
+            });
+        });
+    });
+
+    function showModal(jsonData) {
+        try {
+            dadosPedido = JSON.parse(jsonData); // Parse e armazena globalmente
+            if (dadosPedido) {
+                document.getElementById('modalStatus').textContent = 'Status do pedido: ' + dadosPedido.status_pedido;
+                document.getElementById('modalDate').textContent = 'Data: ' + dadosPedido.data;
+                document.getElementById('modalSubtotal').textContent = 'Subtotal: R$' + dadosPedido.total;
+                document.getElementById('modalTotal').textContent = 'Total: R$' + dadosPedido.total;
+                document.getElementById('modalPaymentMethod').textContent = 'Forma de pagamento: ' + (dadosPedido.paymentMethod || 'não informada');
+                document.getElementById('modalAddress').textContent = 'Endereço: ' + dadosPedido.endereco;
+
+                var productsList = 'Produtos:<br>';
+                dadosPedido.produtos.forEach(function (produto) {
+                    productsList += produto.nome + '<br><img src="../' + produto.imagem + '" style="width:50px;"><br>';
+                });
+                document.getElementById('modalProductName').innerHTML = productsList;
+
+                modal.style.display = "block";
+            }
+        } catch (e) {
+            console.error("Erro ao processar dados do pedido: ", e);
         }
+    }
 
+    function submitReview() {
+        if (!dadosPedido) {
+            console.error("Dados do pedido não estão disponíveis.");
+            return;
+        }
+        var idPedido = dadosPedido.id_pedido; // Usa o id_pedido armazenado
+        var rating = document.getElementById('selectedRating').value;
+        var comment = document.getElementById('commentBox').value;
 
-
-    </script>
+        fetch('submit_review.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'id_pedido=' + idPedido + '&nota=' + rating + '&comentario=' + comment
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            if (data.status === 'success') {
+                document.getElementById('commentBox').disabled = true;
+                document.querySelectorAll('.star-button').forEach(button => {
+                    button.onclick = null;
+                    button.style.cursor = "default";
+                });
+                document.querySelectorAll('.star-button').forEach((star, index) => {
+                    star.style.color = index < rating ? 'orange' : 'gray';
+                });
+                document.querySelector('button[onclick="submitReview()"]').style.display = 'none';
+                document.getElementById('modalProductName').innerHTML += `<p>Comentário: ${comment}</p>`;
+                modal.style.display = "none";
+            }
+        }).catch(error => console.error('Error:', error));
+    }
+</script>
 
 
 </body>
