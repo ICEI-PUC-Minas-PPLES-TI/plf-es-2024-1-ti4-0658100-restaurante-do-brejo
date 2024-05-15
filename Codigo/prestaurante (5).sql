@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 24/04/2024 às 19:23
+-- Tempo de geração: 15/05/2024 às 19:31
 -- Versão do servidor: 8.2.0
 -- Versão do PHP: 8.2.13
 
@@ -20,6 +20,48 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `prestaurante`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `avaliacao_rest`
+--
+
+DROP TABLE IF EXISTS `avaliacao_rest`;
+CREATE TABLE IF NOT EXISTS `avaliacao_rest` (
+  `id_avaliacaorest` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(255) NOT NULL,
+  `comentario` text NOT NULL,
+  `nota` int NOT NULL,
+  PRIMARY KEY (`id_avaliacaorest`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `avaliacao_rest`
+--
+
+INSERT INTO `avaliacao_rest` (`id_avaliacaorest`, `nome`, `comentario`, `nota`) VALUES
+(1, 'Maria Silva', 'Excelente restaurante, comida deliciosa e atendimento amigável.', 5),
+(2, 'João Souza', 'Boa experiência, porém o tempo de espera foi um pouco longo.', 3),
+(3, 'Ana Costa', 'Ambiente agradável e pratos bem servidos. Recomendo!', 4),
+(4, 'Pedro Martins', 'Não fiquei satisfeito com o serviço. Precisam melhorar.', 2),
+(5, 'Luciana Queiroz', 'Incrível! Melhor experiência gastronômica que já tive.', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `avaliacoes_pedidos`
+--
+
+DROP TABLE IF EXISTS `avaliacoes_pedidos`;
+CREATE TABLE IF NOT EXISTS `avaliacoes_pedidos` (
+  `id_avaliacaopedido` int NOT NULL AUTO_INCREMENT,
+  `id_pedido` int NOT NULL,
+  `id_cliente` int NOT NULL,
+  `comentario` text NOT NULL,
+  `nota` int NOT NULL,
+  PRIMARY KEY (`id_avaliacaopedido`)
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
