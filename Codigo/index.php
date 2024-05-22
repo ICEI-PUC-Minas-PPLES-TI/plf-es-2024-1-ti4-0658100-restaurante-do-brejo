@@ -231,52 +231,7 @@
     </div>
   </section>
 
-  <!-- end hot section -->
-  <!-- about section -->
-  <section class="about_section">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-5 offset-md-1">
-          <div class="detail-box">
-            <div class="heading_container">
-              <h2>
-                Sobre <br>
-                Nossa <br>
-                Comida
-              </h2>
-              <hr>
-            </div>
-            <p>
-              Nosso menu é uma homenagem à cozinha mineira, conhecida por sua simplicidade
-              rústica e sabores robustos que aquecem o coração. Aqui, cada receita é preparada
-              com amor, dedicação e um toque de tradição passada de geração em geração.
-            </p>
-            <a href="">
-              Leia Mais
-            </a>
-          </div>
-        </div>
-        <div class="col-md-6 px-0">
-          <div class="img-box">
-            <img src="images/about-img.jpg" alt="">
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- end about section -->
-
-  <!-- dish section -->
-
-
-  <!-- end dish section -->
-
-
-
-
-
-  <!-- client section -->
+  
 
   <?php include 'config.php'; ?>
 

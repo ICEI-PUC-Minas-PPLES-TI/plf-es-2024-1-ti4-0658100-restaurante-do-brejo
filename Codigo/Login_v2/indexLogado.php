@@ -31,7 +31,7 @@ echo "ID do Cliente: " . $id_cliente;
     <div class="sidebar">
         <style>
             .sidebar {
-                background-color: #ef9851;
+                background-color: #ef9051;
                 /* Cor laranja */
             }
         </style>
@@ -41,9 +41,9 @@ echo "ID do Cliente: " . $id_cliente;
         <nav>
             <ul>
                 <li><a href="#"><img src="images/icons/do-utilizador.png" alt="Ícone Pessoa"> Sua Conta</a></li>
-                <li><a href="#"><img src="images/icons/casa.png" alt="Ícone Casa"> Tela Inicial</a></li>
+                <li><a href="../index.php"><img src="images/icons/casa.png" alt="Ícone Casa"> Tela Inicial</a></li>
                 <li><a href="../food.php"><img src="images/icons/cardapio.png" alt="Ícone Menu"> Menu</a></li>
-                <li><a href="#"><img src="images/icons/reserva.png" alt="Ícone Reservas"> Reservas</a></li>
+                <li><a href="reserva/index.php"><img src="images/icons/reserva.png" alt="Ícone Reservas"> Reservas</a></li>
                 <li><a href="avaliacao.php"><img src="images/icons/avaliacao.png" alt="Ícone Avaliações"> Avaliação</a></li>
                 <li><a href="../index.php"><img src="" alt=""> Sair</a></li>
             </ul>

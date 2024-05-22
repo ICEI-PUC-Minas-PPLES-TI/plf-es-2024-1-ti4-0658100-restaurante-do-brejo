@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 15/05/2024 às 19:31
+-- Tempo de geração: 22/05/2024 às 19:00
 -- Versão do servidor: 8.2.0
 -- Versão do PHP: 8.2.13
 
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `carrinho` (
   `quantidade` int NOT NULL,
   `data_hora` timestamp NOT NULL,
   PRIMARY KEY (`id_carrinho`)
-) ENGINE=MyISAM AUTO_INCREMENT=38 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -94,27 +94,23 @@ CREATE TABLE IF NOT EXISTS `pedidos` (
   `data` datetime NOT NULL,
   `endereco` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`id_pedido`)
-) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `pedidos`
 --
 
 INSERT INTO `pedidos` (`id_pedido`, `id_cliente`, `total`, `status_pedido`, `data`, `endereco`) VALUES
-(1, 1, 121, 'Concluído', '2023-04-20 00:00:00', 'Rua das Flores, 123, São Paulo'),
-(2, 1, 56, 'Em preparo', '2023-04-21 00:00:00', 'Avenida Central, 456, Rio de Janeiro'),
-(3, 1, 75, 'Concluído', '2023-04-22 00:00:00', 'Praça da Sé, 789, Salvador'),
-(4, 1, 180, 'Cancelado', '2023-04-23 00:00:00', 'Rua XV de Novembro, 234, Curitiba'),
-(5, 2, 91, 'Concluído', '2023-04-24 00:00:00', 'Rua dos Bobos, 0, Porto Alegre'),
-(6, 2, 136, 'Em preparo', '2023-04-25 00:00:00', 'Avenida Paulista, 999, São Paulo'),
-(7, 3, 210, 'Concluído', '2023-04-26 00:00:00', 'Setor Marista, 888, Goiânia'),
-(8, 3, 50, 'Concluído', '2023-04-27 00:00:00', 'Rua Major Gote, 777, Patos de Minas'),
-(9, 3, 115, 'Cancelado', '2023-04-28 00:00:00', 'Beco Diagonal, 666, Londres'),
-(10, 3, 100, 'Concluído', '2023-04-29 00:00:00', 'Vila dos Atletas, 123, Rio de Janeiro'),
-(14, 2, 19, 'Pago', '2024-04-24 15:58:37', 'Endereco2'),
-(15, 10, 26, 'Pago', '2024-04-24 16:03:47', 'Endereco10'),
-(13, 1, 23, 'Pago', '2024-04-24 15:32:43', 'Endereco1'),
-(16, 1, 30, 'Pago', '2024-04-24 16:13:57', 'Endereco1');
+(1, 1, 121, 'Aceito', '2023-04-20 00:00:00', 'Rua das Flores, 123, São Paulo'),
+(2, 1, 56, 'Aceito', '2023-04-21 00:00:00', 'Avenida Central, 456, Rio de Janeiro'),
+(3, 1, 75, 'Aceito', '2023-04-22 00:00:00', 'Praça da Sé, 789, Salvador'),
+(4, 1, 180, 'Aceito', '2023-04-23 00:00:00', 'Rua XV de Novembro, 234, Curitiba'),
+(5, 2, 91, 'Cancelado', '2023-04-24 00:00:00', 'Rua dos Bobos, 0, Porto Alegre'),
+(6, 2, 136, 'Cancelado', '2023-04-25 00:00:00', 'Avenida Paulista, 999, São Paulo'),
+(7, 3, 210, 'Aceito', '2023-04-26 00:00:00', 'Setor Marista, 888, Goiânia'),
+(8, 3, 50, 'Aceito', '2023-04-27 00:00:00', 'Rua Major Gote, 777, Patos de Minas'),
+(9, 3, 115, 'Aceito', '2023-04-28 00:00:00', 'Beco Diagonal, 666, Londres'),
+(10, 3, 100, 'Cancelado', '2023-04-29 00:00:00', 'Vila dos Atletas, 123, Rio de Janeiro');
 
 -- --------------------------------------------------------
 
@@ -166,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `produtos` (
   `atividade` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `caminho_img` varchar(250) NOT NULL,
   PRIMARY KEY (`id_produto`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `produtos`
@@ -183,6 +179,23 @@ INSERT INTO `produtos` (`id_produto`, `nome`, `categoria`, `preco`, `descricao`,
 (8, 'Tiramisu', 'pf', 15, 'Sobremesa italiana feita com camadas de biscoito, café, mascarpone e cacau em pó.', 'Ativo', 'images/produtos/tiramisu.png'),
 (9, 'Lasanha à Bolonhesa', 'pf', 28, 'Lasanha à bolonhesa, com camadas de molho de carne, massa, queijo e bechamel.', 'Ativo', 'images/produtos/lasanha.png'),
 (10, 'Coxinha de Frango', 'pf', 7, 'Coxinha de massa crocante recheada com frango desfiado e temperado.', 'Ativo', 'images/produtos/coxinha.png');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `reservas`
+--
+
+DROP TABLE IF EXISTS `reservas`;
+CREATE TABLE IF NOT EXISTS `reservas` (
+  `id_reserva` int NOT NULL AUTO_INCREMENT,
+  `id_cliente` int NOT NULL,
+  `data` date NOT NULL,
+  `hora` time NOT NULL,
+  `capacidade_mesa` int NOT NULL,
+  `status` text NOT NULL,
+  PRIMARY KEY (`id_reserva`)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 

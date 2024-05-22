@@ -1,0 +1,162 @@
+/* BARRA DE NAVEGAÇÃO */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  height: 100%;
+  background-color:  #ef9051;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  box-sizing: border-box;
+  border-radius: 0 20px 20px 0; /* Apenas as bordas da direita com bordas arredondadas */
+}
+
+.logo {
+  margin-bottom: 30px;
+}
+
+.logo img {
+  width: 100%;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  margin-bottom: 10px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+nav ul li img {
+  margin-right: 10px;
+  max-width: 24px;
+  max-height: 24px;
+}
+
+nav ul li:hover a {
+  background-color: white; /* Fundo branco ao passar o mouse */
+  color: orange; /* Texto laranja ao passar o mouse */
+}
+
+nav ul li:hover img {
+  filter: invert(56%) sepia(90%) saturate(1091%) hue-rotate(312deg) brightness(101%) contrast(96%); /* Altera a cor do ícone ao passar o mouse */
+}
+
+.icons {
+  margin-top: 20px;
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  background-color: lightgray;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  display: inline-block;
+  text-align: center;
+  line-height: 40px;
+}
+
+.icon-box img {
+  max-width: 50%;
+  max-height: 50%;
+}
+
+.content {
+  margin-left: 250px;
+  padding: 20px;
+}
+
+.toggle-btn {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  background-color: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 999;
+}
+
+nav ul li a:hover {
+  width: calc(100% - 20px); /* Faz o fundo branco ocupar toda a largura da barra de navegação */
+  border-radius: 0 20px 20px 0; /* Adicionando bordas arredondadas apenas ao lado direito */
+}
+
+/* TÍTULO */
+.titulo {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* HISTÓRICO DE RESERVAS */
+.historico-container {
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 50px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  display: grid;
+  gap: 20px;
+}
+
+.reserva-card {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  position: relative;
+}
+
+.reserva-detalhes {
+  flex-grow: 1;
+}
+
+.reserva-detalhes p {
+  margin: 5px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #333;
+}
+
+.btn-solicitar {
+  display: block;
+  width: 150px; /* Ajuste do width */
+  height: 40px; /* Ajuste do height */
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #ef9051;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-solicitar:hover {
+  background-color: darkorange;
+}
