@@ -1,10 +1,11 @@
 <?php
-session_start();
 
-// Checa se o usuário está logado
+session_start();  // Inicia a sessão
+
+// Verifica se o usuário não está logado
 if (!isset($_SESSION['id_cliente'])) {
-    header('Location: login.php');
-    exit();
+    header('Location: login.php');  // Redireciona para a página de login
+    exit();  // Encerra a execução do script
 }
 
 // Importar configuração de conexão
@@ -13,35 +14,37 @@ include 'config.php';
 // Checar se o formulário foi submetido
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Captura dados do formulário
+    $nome = $_POST['nome'];
     $comentario = $_POST['comentario'];
     $nota = $_POST['nota'];
-    $id_cliente = $_SESSION['id_cliente']; // Supõe que o ID do cliente esteja armazenado na sessão
 
     // Preparar a query para inserção no banco de dados
-    $sql = "INSERT INTO avaliacao_rest (id_avaliacaorest, nome, comentario, nota) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO avaliacao_rest (nome, comentario, nota) VALUES (?, ?, ?)";
 
     if ($stmt = $conexao->prepare($sql)) {
         // Bind parameters
-        $stmt->bind_param("isi", $id_cliente, $comentario, $nota);
-
+        $stmt->bind_param("sss", $nome, $comentario, $nota);
         // Executa a query
         if ($stmt->execute()) {
-            echo "Avaliação enviada com sucesso!";
+            // Redireciona com sucesso
+            header('Location: avaliacao.php?status=success');
         } else {
-            echo "Erro ao enviar avaliação: " . $stmt->error;
+            // Redireciona com erro
+            header('Location: avaliacao.php?status=error&message=' . urlencode($stmt->error));
         }
-
         // Fecha statement
         $stmt->close();
     } else {
-        echo "Erro ao preparar statement: " . $conexao->error;
+        // Redireciona com erro de preparação
+        header('Location: avaliacao.php?status=error&message=' . urlencode($conexao->error));
     }
 
     // Fecha a conexão
     $conexao->close();
+    exit();
 } else {
     // Redireciona o usuário de volta ao formulário se o método não for POST
-    header('Location: avaliacao_form.php');
+    header('Location: avaliacao.php');
     exit();
 }
 ?>
