@@ -75,6 +75,7 @@
             <th>Total</th>
             <th>Data</th>
             <th>Endereço</th>
+            <th>Produtos</th> <!-- Nova coluna -->
             <th>Status</th>
             <th>Ações</th>
           </tr>
@@ -122,6 +123,10 @@ document.addEventListener("DOMContentLoaded", function() {
       const enderecoCell = document.createElement("td");
       enderecoCell.textContent = pedido.endereco;
       row.appendChild(enderecoCell);
+
+      const produtosCell = document.createElement("td");
+      produtosCell.textContent = pedido.produtos.join(', ');
+      row.appendChild(produtosCell);
 
       const statusCell = document.createElement("td");
       statusCell.textContent = pedido.status_pedido;

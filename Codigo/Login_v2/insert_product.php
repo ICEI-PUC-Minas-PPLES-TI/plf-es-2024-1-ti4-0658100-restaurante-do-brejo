@@ -15,8 +15,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $imagem_nome = $_FILES['imagem']['name'];
         
         // Move a imagem para o diretório desejado
-        $caminho_imagem = "images/produtos/" . $imagem_nome;
-        move_uploaded_file($imagem_tmp, $caminho_imagem);
+        $caminho_imagem = "images/produtos/" . $imagem_nome; // Remove o ../
+        move_uploaded_file($imagem_tmp, "../" . $caminho_imagem); // Adiciona o ../ aqui apenas na movimentação do arquivo
     } else {
         // Caso não seja enviada uma imagem, você pode definir um valor padrão para o caminho da imagem
         $caminho_imagem = ""; // Altere para o valor padrão desejado

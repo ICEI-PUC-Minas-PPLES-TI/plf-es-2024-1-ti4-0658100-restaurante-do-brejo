@@ -72,7 +72,7 @@
             <div id="myNav" class="overlay">
               <div class="overlay-content">
                 <a href="../index.php">HOME</a>
-                <a href="../food.php">Menu</a>
+                <a href="login.php">Menu</a>
                 <a href="../about.php">Sobre</a>
                 <a href="login.php">Login</a>
                 <a href="../contact.php">Fale conosco</a>

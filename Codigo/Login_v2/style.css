@@ -8,7 +8,7 @@ body, html {
   .sidebar {
     width: 250px;
     height: 100%;
-    background-color: orange;
+    background-color: #ef9051;
     position: fixed;
     left: 0;
     top: 0;

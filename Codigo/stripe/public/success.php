@@ -11,8 +11,8 @@ if (empty($_GET['session_id'])) {
 }
 $sessionId = $_GET['session_id'];
 
-// Obtém o ID do cliente da sessão ou define um fallback seguro
-$id_cliente = $_SESSION['id_cliente'] ; // Fallback só para desenvolvimento
+// Obtém o ID do cliente da sessão
+$id_cliente = $_SESSION['id_cliente'];
 
 try {
     // Conecta ao banco de dados
@@ -65,8 +65,19 @@ try {
             'endereco' => $cliente['endereco'] // Usando o endereço do cliente
         ]);
 
-        // Restante do código para inserir itens do pedido, limpar carrinho, etc.
-        // ...
+        // Obtém o ID do pedido recém-inserido
+        $pedidoId = $pdo->lastInsertId();
+
+        // Insere os itens do pedido na tabela pedido_produtos
+        $stmt = $pdo->prepare("INSERT INTO pedido_produtos (id_pedido, id_produto) VALUES (:id_pedido, :id_produto)");
+        foreach ($carrinhoItens as $item) {
+            for ($i = 0; $i < $item['quantidade']; $i++) {
+                $stmt->execute([
+                    'id_pedido' => $pedidoId,
+                    'id_produto' => $item['id_produto']
+                ]);
+            }
+        }
 
         // Limpa o carrinho do cliente
         $stmt = $pdo->prepare("DELETE FROM carrinho WHERE id_usuario = :id_cliente");

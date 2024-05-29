@@ -1,5 +1,4 @@
 <?php
-
 session_start();  // Inicia a sessão
 
 // Verifica se o usuário não está logado
@@ -11,7 +10,6 @@ if (!isset($_SESSION['id_cliente'])) {
 // Agora atribua o valor da variável $_SESSION['id_cliente'] a $id_cliente
 $id_cliente = $_SESSION['id_cliente'];
 
-// Imprime o ID do cliente para visualização
 echo "ID do Cliente: " . $id_cliente;
 
 ?>
@@ -57,20 +55,14 @@ echo "ID do Cliente: " . $id_cliente;
             <?php
             include 'config.php';
 
-            // Preparando a consulta para evitar SQL Injection
-            // Preparando a consulta para evitar SQL Injection
-            $stmt = $conexao->prepare("SELECT p.id_pedido, p.status_pedido, p.data, p.total, p.endereco, prod.nome, prod.caminho_img
-                                        FROM pedidos p
-                                        JOIN pedido_produtos pp ON p.id_pedido = pp.id_pedido
-                                        JOIN produtos prod ON pp.id_produto = prod.id_produto
-                                        WHERE p.id_cliente = ?
-                                        ORDER BY p.data DESC");
-            $stmt->bind_param("i", $id_cliente); // Usando $id_cliente aqui
-            $stmt->execute();
-            $result = $stmt->get_result();
-
-            // Restante do código...
-            
+            // Consulta sem evitar SQL Injection (não recomendado)
+            $sql = "SELECT p.id_pedido, p.status_pedido, p.data, p.total, p.endereco, prod.nome, prod.caminho_img
+                    FROM pedidos p
+                    JOIN pedido_produtos pp ON p.id_pedido = pp.id_pedido
+                    JOIN produtos prod ON pp.id_produto = prod.id_produto
+                    WHERE p.id_cliente = $id_cliente
+                    ORDER BY p.data DESC";
+            $result = $conexao->query($sql);
 
             $pedidos = [];
             if ($result->num_rows > 0) {
@@ -239,9 +231,6 @@ echo "ID do Cliente: " . $id_cliente;
             }
         }).catch(error => console.error('Error:', error));
     }
-</script>
-
-
+    </script>
 </body>
-
 </html>
