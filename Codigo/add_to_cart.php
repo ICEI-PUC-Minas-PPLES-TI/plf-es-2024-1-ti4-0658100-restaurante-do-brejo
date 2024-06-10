@@ -1,8 +1,8 @@
 <?php
 include_once('config.php');
 session_start();
-$_SESSION['userId'] = 1;
-$userId = $_SESSION['userId'] ?? 0;  // Certifique-se de que o usuário esteja logado
+$_SESSION['id_cliente'] ;
+$userId = $_SESSION['id_cliente'] ?? 0;  // Certifique-se de que o usuário esteja logado
 $id_produto = $_GET['id_produto'] ?? 0;
 $quantidade = 1;  // Este é o valor padrão para adicionar ao carrinho
 
@@ -40,5 +40,5 @@ if ($userId > 0 && $id_produto > 0) {
     exit();
 }
 
-$conn->close();
+
 ?>

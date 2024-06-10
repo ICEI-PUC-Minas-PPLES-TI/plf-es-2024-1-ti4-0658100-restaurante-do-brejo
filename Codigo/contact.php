@@ -52,8 +52,7 @@
             <div id="myNav" class="overlay">
               <div class="overlay-content">
                 <a href="index.php">HOME</a>
-                <a href="Login_v2/login.php">Menu</a>
-                <a href="about.php">Sobre</a>            
+                <a href="Login_v2/login.php">Menu</a>         
                 <a href="Login_v2/login.php">Login</a>
                 <a href="contact.php">Fale conosco</a>
               </div>
