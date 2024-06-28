@@ -23,6 +23,4 @@ Dessa forma, a necessidade de desenvolver um sistema para o Restaurante do Brejo
 
 ## Instruções de utilização
 
-
-
-[Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.]
+LInk do nosso site: http://restaurantedobrejo.infinityfreeapp.com/
