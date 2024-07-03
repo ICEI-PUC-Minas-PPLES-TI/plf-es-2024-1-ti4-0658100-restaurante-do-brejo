@@ -35,17 +35,23 @@ Para executar o sistema, você precisará ter os seguintes componentes instalado
 2. Clonar o Repositório
 Primeiro, clone o repositório em sua máquina local:
 
+```
 git clone https://github.com/ICEI-PUC-Minas-PPLES-TI/plf-es-2024-1-ti4-0658100-restaurante-do-brejo.git
 cd plf-es-2024-1-ti4-0658100-restaurante-do-brejo
+```
 
 3. Configurar o Backend
 Navegue até o diretório backend:
 
+```
 cd backend
+```
 
 Instale as dependências do Maven:
 
+```
 mvn install
+```
 
 Configure o banco de dados MySQL:
 
@@ -53,30 +59,42 @@ Configure o banco de dados MySQL:
 
 * Configure o usuário e a senha no arquivo application.properties localizado em src/main/resources:
 
+```
 spring.datasource.url=jdbc:mysql://localhost:3306/restaurante_do_brejo
 spring.datasource.username=SEU_USUARIO
 spring.datasource.password=SUA_SENHA
+```
+
 Execute o servidor Spring Boot:
 
-
+```
 mvn spring-boot:run
+```
+
 
 4. Configurar o Frontend
 Navegue até o diretório frontend:
 
+```
 cd ../frontend
+```
 
 Instale as dependências do Node.js:
 
+```
 npm install
+```
 
 Execute o servidor de desenvolvimento:
 
+```
 npm start
+```
 
 O servidor será iniciado e o sistema estará disponível em http://localhost:3000.
 
 5. Utilizando o Sistema
    
 Abra um navegador web e acesse http://localhost:3000 para começar a utilizar o sistema.
+
 Você também pode acessar o site pelo link: http://restaurantedobrejo.infinityfreeapp.com/
