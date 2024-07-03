@@ -24,6 +24,7 @@ Dessa forma, a necessidade de desenvolver um sistema para o Restaurante do Brejo
 ## Instruções de utilização
 
 1. Pré-requisitos
+
 Para executar o sistema, você precisará ter os seguintes componentes instalados:
 
 * Java Development Kit (JDK) 11 ou superior
